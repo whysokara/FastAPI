@@ -21,7 +21,7 @@ def get_posts():
     return {"data" : "This is your post"}
 
 ## A post request
-@app.post("/createposts")
+@app.post("/posts")
 def create_posts(post : Post):
     print(post)
     print(post.dict())  ## converting pydantic model to python dictionary
