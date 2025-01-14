@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 from fastapi.params import Body
+from pydantic import BaseModel ## For Schema Validation
+from typing import Optional
 
 ## Creating an instance
 app = FastAPI()
+
+class Post(BaseModel):
+    title : str
+    content : str
+    published : bool = True
+    rating : Optional[int] = None
 
 @app.get("/")
 def root():
@@ -14,6 +22,7 @@ def get_posts():
 
 ## A post request
 @app.post("/createposts")
-def create_posts(payload: dict = Body(...) ):
-    print(payload)
-    return {"New Post" : f"Title {payload['title']} content: {payload['content']}"}
+def create_posts(post : Post):
+    print(post)
+    print(post.dict())  ## converting pydantic model to python dictionary
+    return {"data" : post}
