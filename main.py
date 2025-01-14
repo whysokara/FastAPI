@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status, HTTPException
 from fastapi.params import Body
 from pydantic import BaseModel ## For Schema Validation
 from typing import Optional
@@ -34,7 +34,7 @@ def get_posts():
 
 ## A post request
 
-@app.post("/posts")
+@app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post : Post):
     post_dict = post.dict() ## converting pydantic model to python dictionary
     post_dict["id"] = randrange(1, 1000000)
@@ -45,5 +45,10 @@ def create_posts(post : Post):
 
 @app.get("/posts/{id}")
 def get_post(id: int):
+
     post = find_post(id)
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id: {id} not found")
+        # response.status_code = status.HTTP_404_NOT_FOUND ## Customise status code when id not found
+        # return {'message': f"Post with id: {id} not found"}
     return {"post details":post}
