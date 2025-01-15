@@ -11,9 +11,21 @@ import time
 
 ## WHile using ORM
 import sqlalchemy
+from . import models
+from .database import engine, SessionLocal
 
+
+models.Base.metadata.create_all(bind=engine)
 ## Creating an instance
 app = FastAPI()
+
+## Dependency while using sqlalchemy
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # take environment variables from .env
 load_dotenv()  
