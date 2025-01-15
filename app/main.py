@@ -3,15 +3,39 @@ from fastapi.params import Body
 from pydantic import BaseModel ## For Schema Validation
 from typing import Optional
 from random import randrange
+import psycopg2
+from psycopg2.extras import RealDictCursor ## to import column names from postgres along with values
+from dotenv import load_dotenv
+import os   
+import time
 
 ## Creating an instance
 app = FastAPI()
+load_dotenv()  # take environment variables from .env
+## Variables
+database_name = os.getenv('DATABASE_NAME')
+database_user = os.getenv('DATABASE_USER')
+secret_key = os.getenv('DATABASE_PASSWORD')
 
 class Post(BaseModel):
     title : str
     content : str
     published : bool = True
-    # rating : Optional[int] = None
+
+## COnnecting to db
+while True:
+    print("Attempting to connect to the database...")  # Before try block
+
+    try:
+        conn = psycopg2.connect(host='localhost', database=database_name , user=database_user, password=secret_key, cursor_factory = RealDictCursor)
+        cursor = conn.cursor()
+        print("Connected successfully to db")
+        break
+    
+    except Exception as error:
+        print("Connecting to db failed")
+        print("Error: ", error)
+        time.sleep(2)
 
 ## Temporary Memory
 my_posts = [

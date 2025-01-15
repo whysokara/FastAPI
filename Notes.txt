@@ -1,2 +1,5 @@
 Run FastAPI server : uvicorn <filename>:<appInstance>
 Run FastAPI server (auto reload): uvicorn <filename>:<appInstance> --reload
+
+Postgres:
+PostgresDriver/adapter : psycopg
