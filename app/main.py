@@ -11,31 +11,33 @@ import time
 
 ## Creating an instance
 app = FastAPI()
-load_dotenv()  # take environment variables from .env
+
+# take environment variables from .env
+load_dotenv()  
+
 ## Variables
 database_name = os.getenv('DATABASE_NAME')
 database_user = os.getenv('DATABASE_USER')
 secret_key = os.getenv('DATABASE_PASSWORD')
 
+## Data Validation
 class Post(BaseModel):
     title : str
     content : str
     published : bool = True
 
-## COnnecting to db
-while True:
-    print("Attempting to connect to the database...")  # Before try block
-
-    try:
-        conn = psycopg2.connect(host='localhost', database=database_name , user=database_user, password=secret_key, cursor_factory = RealDictCursor)
-        cursor = conn.cursor()
-        print("Connected successfully to db")
-        break
+## Connecting to db
+# while True:
+try:
+    conn = psycopg2.connect(host='localhost', database=database_name , user=database_user, password=secret_key, cursor_factory = RealDictCursor)
+    cursor = conn.cursor()
+    print("Connected successfully to db")
+        # break
     
-    except Exception as error:
-        print("Connecting to db failed")
-        print("Error: ", error)
-        time.sleep(2)
+except Exception as error:
+    print("Connecting to db failed")
+    print("Error: ", error)
+        # time.sleep(2)
 
 ## Temporary Memory
 my_posts = [
@@ -49,11 +51,13 @@ def find_post(id):
         if post['id'] == id:
             return post
         
+        
 ## For deleting post find index of post
 def find_index_post(id):
     for i, p in enumerate(my_posts):
         if p['id'] == id:
             return i
+
 
 ## get root path
 @app.get("/")
@@ -61,10 +65,13 @@ def find_index_post(id):
 def root():
     return {"message" : "Welcome to my API"}
 
+## Get all posts
 @app.get("/posts")
 
 def get_posts():
-    return {"data" : my_posts}
+    cursor.execute(""" SELECT * FROM posts """)
+    posts = cursor.fetchall()
+    return {"data" : posts}
 
 ## post request
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
@@ -82,8 +89,6 @@ def get_post(id: int):
     post = find_post(id)
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id: {id} not found")
-        # response.status_code = status.HTTP_404_NOT_FOUND ## Customise status code when id not found
-        # return {'message': f"Post with id: {id} not found"}
     return {"post details":post}
 
 
@@ -95,7 +100,6 @@ def delete_post(id: int):
     if index == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id: {id} does not exsist")
     my_posts.pop(index)
-    # raise HTTPException(status_code=status.HTTP_204_NO_CONTENT,detail=f"Post with id: {id} is deleted successfully")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
