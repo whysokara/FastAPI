@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 import os   
 import time
 
+## WHile using ORM
+import sqlalchemy
+
 ## Creating an instance
 app = FastAPI()
 
