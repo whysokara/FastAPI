@@ -1,4 +1,4 @@
-from fastapi import FastAPI, status, HTTPException, Response
+from fastapi import FastAPI, status, HTTPException, Response, Depends
 from fastapi.params import Body
 from pydantic import BaseModel ## For Schema Validation
 from typing import Optional
@@ -11,21 +11,15 @@ import time
 
 ## WHile using ORM
 import sqlalchemy
+from sqlalchemy.orm import Session
 from . import models
-from .database import engine, SessionLocal
+from .database import engine, get_db
+
 
 
 models.Base.metadata.create_all(bind=engine)
 ## Creating an instance
 app = FastAPI()
-
-## Dependency while using sqlalchemy
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # take environment variables from .env
 load_dotenv()  
@@ -79,6 +73,11 @@ def find_index_post(id):
 
 def root():
     return {"message" : "Welcome to my API"}
+
+
+@app.get("/sqlalchemy")
+def test_posts(db: Session = Depends(get_db)):
+    return {"Status" : "Success"}
 
 ## Get all posts
 @app.get("/posts")
