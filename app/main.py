@@ -71,38 +71,35 @@ def find_index_post(id):
 def root():
     return {"message" : "Welcome to my API"}
 
-## Test
-@app.get("/sqlalchemy")
-def test_posts(db: Session = Depends(get_db)):
-    alldata = db.query(models.Post).all()
-    return {"Status" : alldata}
-
 ## Get all posts
 @app.get("/posts")
 
-def get_posts():
-    cursor.execute(""" SELECT * FROM posts """)
-    posts = cursor.fetchall()
-    return {"data" : posts}
+def get_posts(db: Session = Depends(get_db)):
+    # cursor.execute(""" SELECT * FROM posts """)
+    # posts = cursor.fetchall()
+    posts = db.query(models.Post).all()
+    return {"Status" : posts}
 
-## post request
+## Create a post
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 
-def create_posts(post : Post):
-    cursor.execute(""" INSERT INTO posts (title, content, published) VALUES(%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
-    new_post = cursor.fetchone()
-    conn.commit()   ## to commit changes in db
+def create_posts(post : Post, db: Session = Depends(get_db)):
+    # new_post = models.Post(title = post.title, content = post.content, published = post.published) long menthod
+    new_post = models.Post(**post.dict())
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
     return {"data" : new_post}
 
 ## Get post by id
 @app.get("/posts/{id}")
 
-def get_post(id: str):
-    cursor.execute(""" SELECT * FROM posts WHERE id = %s """,(str(id)))
-    post = cursor.fetchone()
+def get_post(id: int,db: Session = Depends(get_db)):
+    post = db.query(models.Post).filter(models.Post.id == int(id)).first()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id: {id} not found")
     return {"post details":post}
+
 
 ## Delete a post
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
