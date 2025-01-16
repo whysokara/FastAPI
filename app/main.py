@@ -9,15 +9,14 @@ from dotenv import load_dotenv
 import os   
 import time
 
-## WHile using ORM
+## While using ORM
 import sqlalchemy
 from sqlalchemy.orm import Session
 from . import models
 from .database import engine, get_db
 
-
-
 models.Base.metadata.create_all(bind=engine)
+
 ## Creating an instance
 app = FastAPI()
 
@@ -60,13 +59,11 @@ def find_post(id):
         if post['id'] == id:
             return post
         
-        
 ## For deleting post find index of post
 def find_index_post(id):
     for i, p in enumerate(my_posts):
         if p['id'] == id:
             return i
-
 
 ## get root path
 @app.get("/")
@@ -74,10 +71,11 @@ def find_index_post(id):
 def root():
     return {"message" : "Welcome to my API"}
 
-
+## Test
 @app.get("/sqlalchemy")
 def test_posts(db: Session = Depends(get_db)):
-    return {"Status" : "Success"}
+    alldata = db.query(models.Post).all()
+    return {"Status" : alldata}
 
 ## Get all posts
 @app.get("/posts")
@@ -116,8 +114,6 @@ def delete_post(id: str):
     if deleted_post == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id: {id} does not exsist")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
 
 ## Update a post
 @app.put("/posts/{id}")
