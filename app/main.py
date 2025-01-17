@@ -1,6 +1,5 @@
 from fastapi import FastAPI, status, HTTPException, Response, Depends
 from fastapi.params import Body
-from pydantic import BaseModel ## For Schema Validation
 from typing import Optional
 from random import randrange
 import psycopg2
@@ -12,7 +11,7 @@ import time
 ## While using ORM
 import sqlalchemy
 from sqlalchemy.orm import Session
-from . import models
+from . import models, schemas
 from .database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
@@ -28,11 +27,6 @@ database_name = os.getenv('DATABASE_NAME')
 database_user = os.getenv('DATABASE_USER')
 secret_key = os.getenv('DATABASE_PASSWORD')
 
-## Data Validation
-class Post(BaseModel):
-    title : str
-    content : str
-    published : bool = True
 
 ## Connecting to db
 # while True:
@@ -83,7 +77,7 @@ def get_posts(db: Session = Depends(get_db)):
 ## Create a post
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 
-def create_posts(post : Post, db: Session = Depends(get_db)):
+def create_posts(post : schemas.PostCreate, db: Session = Depends(get_db)):
     # new_post = models.Post(title = post.title, content = post.content, published = post.published) long menthod
     new_post = models.Post(**post.dict())
     db.add(new_post)
@@ -115,7 +109,7 @@ def delete_post(id: int,db: Session = Depends(get_db)):
 ## Update a post
 @app.put("/posts/{id}")
 
-def update_post(id: int, updated_post: Post, db: Session = Depends(get_db)):
+def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db)):
     post_query = db.query(models.Post).filter(models.Post.id == int(id))
     post = post_query.first()
     
