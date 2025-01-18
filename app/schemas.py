@@ -1,4 +1,5 @@
-from pydantic import BaseModel, ConfigDict ## For Schema Validation
+from pydantic import BaseModel ## For Schema Validation
+from datetime import datetime
 
 ## Data Validation
 class PostBase(BaseModel):
@@ -11,10 +12,9 @@ class PostCreate(PostBase):
 
 ## For response
 
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool 
+class Post(PostBase):
+    id: int
+    # created_at: datetime
+    
     class Config:
         orm_mode = True
-    # model_config = ConfigDict(from_attributes=True)
