@@ -41,23 +41,6 @@ except Exception as error:
     print("Error: ", error)
         # time.sleep(2)
 
-## Temporary Memory
-my_posts = [
-    {"title" : "title for post 1", "content" : "content for post 1", "id":1},
-    {"title" : "Favourite Food", "content" : "My favourite food is pizza", "id":2}
-]
-
-## Finding Post
-def find_post(id):
-    for post in my_posts:
-        if post['id'] == id:
-            return post
-        
-## For deleting post find index of post
-def find_index_post(id):
-    for i, p in enumerate(my_posts):
-        if p['id'] == id:
-            return i
 
 ## get root path
 @app.get("/")
