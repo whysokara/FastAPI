@@ -1,12 +1,12 @@
 from fastapi import FastAPI, status, HTTPException, Response, Depends
-from fastapi.params import Body
+from psycopg2.extras import RealDictCursor ## to import column names from postgres along with values
 from typing import Optional, List
+from fastapi.params import Body
+from dotenv import load_dotenv
 from random import randrange
 import psycopg2
-from psycopg2.extras import RealDictCursor ## to import column names from postgres along with values
-from dotenv import load_dotenv
-import os   
 import time
+import os   
 
 ## While using ORM
 import sqlalchemy
@@ -118,7 +118,6 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
     post_query.update(updated_post.dict(), synchronize_session=False)
     db.commit()
     return post_query.first()
-
 
 ## Creating a user
 @app.post("/users", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)

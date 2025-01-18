@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
-from .database import Base
-from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.sql.expression import text
 from sqlalchemy.sql import func
+from .database import Base
 
+# Post Table
 class Post(Base):
     __tablename__ = "posts"
     
@@ -15,7 +16,6 @@ class Post(Base):
     
     
 ## User Table
-
 class User(Base):
     __tablename__ = "users"
     

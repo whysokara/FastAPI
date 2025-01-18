@@ -11,7 +11,6 @@ class PostCreate(PostBase):
     pass
 
 ## For response
-
 class Post(PostBase):
     id: int
     created_at: datetime
