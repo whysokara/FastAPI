@@ -11,7 +11,7 @@ import time
 ## While using ORM
 import sqlalchemy
 from sqlalchemy.orm import Session
-from . import models, schemas
+from . import models, schemas, utils
 from .database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
@@ -123,6 +123,11 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
 ## Creating a user
 @app.post("/users", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    
+    ## hash the password - user.password
+    hashed_password = utils.hash(user.password)
+    user.password = hashed_password
+    
     new_user = models.User(**user.model_dump())
     db.add(new_user)
     # if new_user:
