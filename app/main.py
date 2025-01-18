@@ -119,3 +119,15 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
     db.commit()
     return post_query.first()
 
+
+## Creating a user
+@app.post("/users", status_code=status.HTTP_201_CREATED)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    new_user = models.User(**user.model_dump())
+    db.add(new_user)
+    # if new_user:
+    #     raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exsist")
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+    

@@ -1,4 +1,4 @@
-from pydantic import BaseModel ## For Schema Validation
+from pydantic import BaseModel, EmailStr ## For Schema Validation
 from datetime import datetime
 
 ## Data Validation
@@ -14,7 +14,12 @@ class PostCreate(PostBase):
 
 class Post(PostBase):
     id: int
-    # created_at: datetime
+    created_at: datetime
     
     class Config:
         orm_mode = True
+
+## Creating a user
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
