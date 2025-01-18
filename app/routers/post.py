@@ -4,10 +4,12 @@ from ..database import get_db
 from sqlalchemy.orm import Session
 from typing import List
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/posts"
+)
 
 ## Get all posts
-@router.get("/posts", response_model=List[schemas.Post])
+@router.get("/", response_model=List[schemas.Post])
 
 def get_posts(db: Session = Depends(get_db)):
     # cursor.execute(""" SELECT * FROM posts """)
@@ -16,7 +18,7 @@ def get_posts(db: Session = Depends(get_db)):
     return posts
 
 ## Create a post
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
 
 def create_posts(post : schemas.PostCreate, db: Session = Depends(get_db)):
     # new_post = models.Post(title = post.title, content = post.content, published = post.published) long menthod
@@ -27,7 +29,7 @@ def create_posts(post : schemas.PostCreate, db: Session = Depends(get_db)):
     return new_post
 
 ## Get post by id
-@router.get("/posts/{id}", response_model=schemas.Post)
+@router.get("/{id}", response_model=schemas.Post)
 
 def get_post(id: int,db: Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == int(id)).first()
@@ -36,7 +38,7 @@ def get_post(id: int,db: Session = Depends(get_db)):
     return post
 
 ## Delete a post
-@router.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 
 def delete_post(id: int,db: Session = Depends(get_db)):
     deleted_post = db.query(models.Post).filter(models.Post.id == int(id))
@@ -48,7 +50,7 @@ def delete_post(id: int,db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 ## Update a post
-@router.put("/posts/{id}", response_model=schemas.Post)
+@router.put("/{id}", response_model=schemas.Post)
 
 def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db)):
     post_query = db.query(models.Post).filter(models.Post.id == int(id))
