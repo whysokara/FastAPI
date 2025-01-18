@@ -32,3 +32,6 @@ class UserOut(BaseModel):
     
     class Config:
         orm_mode = True
+        
+# ## Response while fetching account by id
+# class
