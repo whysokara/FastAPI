@@ -16,7 +16,7 @@ class Post(PostBase):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attribute = True
 
 ## Creating a user
 class UserCreate(BaseModel):
@@ -31,7 +31,9 @@ class UserOut(BaseModel):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attribute = True
         
-# ## Response while fetching account by id
-# class
+## For login auth
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str

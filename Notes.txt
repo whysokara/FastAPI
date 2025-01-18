@@ -3,6 +3,7 @@ Run FastAPI server (auto reload): uvicorn <filename>:<appInstance> --reload
 
 Postgres:
 PostgresDriver/adapter : psycopg
+python-jose[cryptography] => JWT Token
 
 
 
@@ -10,3 +11,4 @@ PostgresDriver/adapter : psycopg
 Created Posts table
 Created User registration table
 inplemented password hashing
+
